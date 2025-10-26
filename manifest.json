@@ -1,0 +1,15 @@
+{
+  "name": "CleanWorld",
+  "short_name": "CleanWorld",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00ccff",
+  "icons": [
+    {
+      "src": "primerlogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
