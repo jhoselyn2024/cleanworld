@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanWorld</title>
+  <style>
+    :root{
+      --bg1: linear-gradient(180deg,#140015,#311033);
+      --accent1: #00ccff;
+      --accent2: #00ff88;
+      --accentText: #00d1ff;
+      --card-radius: 20px;
+      --input-bg: rgba(255,255,255,0.07);
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg1);
+      font-family: "Poppins", "Segoe UI", sans-serif;
+      color:#fff;
+      padding:20px;
+    }
+    .stage{
+      width:100%;
+      max-width:400px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .panel{
+      width:100%;
+      border-radius:var(--card-radius);
+      padding:25px 20px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position:relative;
+      overflow:hidden;
+      min-height:560px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      margin-bottom:20px;
+    }
+    #p1{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:20px;
+      padding-top:30px;
+    }
+    
+    /* Botón atrás pequeño en esquina superior derecha */
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+    
+    /* EFECTO BRILLANTE PARA BOTONES */
+    .btn-container {
+      position: relative;
+      width: 85%;
+      margin: 5px 0;
+    }
+    
+    .btn{
+      width:100%;
+      padding:14px;
+      border-radius:14px;
+      border:none;
+      font-weight:600;
+      cursor:pointer;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color:#04121a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      transition: all 0.3s ease;
+      font-size:15px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    /* Efecto de brillo alrededor */
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      border-radius: 17px;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .btn:hover::before {
+      opacity: 0.6;
+      animation: pulse-glow 1.5s infinite;
+    }
+    
+    .btn:hover{
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .btn:active{ 
+      transform:translateY(1px);
+    }
+    
+    /* Animación de pulso brillante */
+    @keyframes pulse-glow {
+      0% {
+        opacity: 0.6;
+        box-shadow: 0 0 10px var(--accent1);
+      }
+      50% {
+        opacity: 0.8;
+        box-shadow: 0 0 20px var(--accent1), 0 0 30px var(--accent2);
+      }
+      100% {
+        opacity: 0.6;
+        box-shadow: 0 0 10px var(--accent1);
+      }
+    }
+    
+    /* Efecto para botón secundario */
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 2px solid #00ff88;
+    }
+    
+    .btn-secondary::before {
+      background: linear-gradient(90deg, #6ee6b3, #00a0ff);
+    }
+    
+    .title{
+      text-align:center;
+      width:100%;
+      margin-bottom: 10px;
+    }
+    .title h1{
+      margin:0;
+      font-size:24px;
+      color:var(--accent2);
+      letter-spacing:0.5px;
+    }
+    .title p{
+      margin:5px 0 15px 0;
+      color:#d9f9e6;
+      font-weight:600;
+      font-size:14px;
+    }
+    
+    .form{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:center;
+    }
+    .form input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:none;
+      background:var(--input-bg);
+      color:#fff;
+      outline:none;
+      font-size:15px;
+      transition: all 0.3s ease;
+      margin: 2px 0;
+    }
+    .form input:focus{
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 2px var(--accent1);
+    }
+    
+    .login-header{
+      width:100%;
+      text-align:center;
+      margin-bottom:20px;
+    }
+    .login-title{
+      font-size:20px;
+      color:#fffbff;
+      margin-bottom:5px;
+    }
+    .login-sub{
+      font-size:32px;
+      color:var(--accentText);
+      margin:0;
+      font-weight:800;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+    
+    .login-input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:none;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      color:#fff;
+      margin: 5px 0;
+      transition: all 0.3s ease;
+      font-size:15px;
+    }
+    .login-input:focus{
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 2px var(--accent2);
+    }
+    
+    .brand{
+      margin-top:15px;
+      text-align:center;
+    }
+    .brand-name{
+      font-size:22px;
+      color:var(--accent2);
+      font-weight:700;
+      margin-bottom:3px;
+    }
+    .brand-slogan{
+      font-size:12px;
+      color:#bfe9d3;
+    }
+    
+    a.link{
+      color: #99e6ff;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s ease;
+      text-align:center;
+      display:block;
+      margin:12px 0;
+    }
+    a.link:hover{
+      color: var(--accent1);
+      text-decoration: underline;
+    }
+    
+    /* Logo circular principal */
+    .logo-circle{
+      width:120px;
+      height:120px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent1));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 45px;
+      color: white;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+      transition: all 0.3s ease;
+    }
+    
+    .logo-circle:hover {
+      filter: drop-shadow(0 0 20px var(--accent1));
+      transform: scale(1.05);
+    }
+    
+    /* Iconos sociales */
+    .social-icons{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:15px;
+    }
+    .social-circle{
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      color:white;
+      font-size:16px;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.1);
+      position: relative;
+    }
+    
+    .social-circle::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      background: inherit;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .social-circle:hover::before {
+      opacity: 0.6;
+      animation: social-pulse 1.5s infinite;
+    }
+    
+    .social-circle:hover{
+      transform: scale(1.1);
+    }
+    
+    @keyframes social-pulse {
+      0%, 100% {
+        box-shadow: 0 0 5px currentColor;
+      }
+      50% {
+        box-shadow: 0 0 15px currentColor;
+      }
+    }
+    
+    .note{
+      font-size:11px;
+      color:#d3d3d3;
+      text-align:center;
+      margin-top:10px;
+      line-height:1.3;
+    }
+
+    /* ========== DASHBOARD STYLES ========== */
+    .dashboard {
+      width: 100%;
+      max-width: 800px;
+      border-radius: var(--card-radius);
+      padding: 25px 20px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-top: 10px;
+    }
+    
+    .dashboard-title {
+      font-size: 28px;
+      color: var(--accent2);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .dashboard-subtitle {
+      font-size: 16px;
+      color: #d9f9e6;
+    }
+    
+    .user-info {
+      text-align: center;
+      margin: 15px 0 25px 0;
+    }
+    
+    .user-name {
+      font-size: 20px;
+      color: var(--accent1);
+      margin-bottom: 5px;
+    }
+    
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,0,0,0.2);
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+      border-radius: 10px;
+      padding: 8px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 12px;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,0,0,0.3);
+    }
+    
+    /* NUEVO: GRID DE MÓDULOS */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .module-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      min-height: 180px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .module-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.12);
+    }
+    
+    .module-icon {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    .module-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--accent1);
+    }
+    
+    .module-description {
+      font-size: 12px;
+      color: #cccccc;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+    
+    /* COLORES PARA CADA MÓDULO */
+    .module-users { border-left: 4px solid var(--accent1); }
+    .module-containers { border-left: 4px solid #00ff88; }
+    .module-rewards { border-left: 4px solid #ff6b6b; }
+    .module-history { border-left: 4px solid #ffd93d; }
+    .module-points { border-left: 4px solid #6bcf7f; }
+    .module-info { border-left: 4px solid #9d4edd; }
+    
+    /* MODAL ESTILOS */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: linear-gradient(180deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9));
+      border-radius: var(--card-radius);
+      padding: 25px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 2px solid var(--accent1);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 10px;
+    }
+    
+    .modal-title {
+      font-size: 22px;
+      color: var(--accent1);
+      font-weight: 600;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+    }
+    
+    /* ESTILOS PARA DATOS DE USUARIO */
+    .user-data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .data-item {
+      background: rgba(255,255,255,0.05);
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 3px solid var(--accent1);
+    }
+    
+    .data-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    
+    .data-value {
+      font-size: 14px;
+      color: var(--accent1);
+      font-weight: 600;
+    }
+    
+    /* ESTILOS PARA RECOMPENSAS CON MAPS */
+    .reward-item {
+      background: rgba(255,107,107,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #ff6b6b;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .reward-item:hover {
+      background: rgba(255,107,107,0.2);
+      transform: translateX(5px);
+    }
+    
+    .map-link {
+      color: var(--accent1);
+      text-decoration: none;
+      font-size: 11px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+    
+    .map-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* ESTILOS PARA GRÁFICO DE PUNTOS MEJORADO */
+    .chart-controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .month-select, .year-select {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--accent1);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      min-width: 150px;
+    }
+    
+    .month-select option, .year-select option {
+      background: #311033;
+      color: white;
+    }
+    
+    .chart-container {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      min-height: 250px;
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .chart-bar {
+      background: #6bcf7f;
+      width: 35px;
+      border-radius: 5px 5px 0 0;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .chart-bar:hover {
+      background: var(--accent2);
+      transform: scale(1.05);
+    }
+    
+    .bar-label {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #ccc;
+      white-space: nowrap;
+    }
+    
+    .bar-value {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    
+    .total-points {
+      text-align: center;
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(0,255,136,0.1);
+      border-radius: 10px;
+      border: 1px solid var(--accent2);
+    }
+    
+    .points-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent2);
+      margin: 15px 0;
+    }
+
+    /* ESTILOS MEJORADOS PARA HISTORIAL */
+    .history-controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    
+    .history-item {
+      background: rgba(255,255,255,0.05);
+      padding: 18px;
+      margin: 12px 0;
+      border-radius: 12px;
+      border-left: 4px solid #ffd93d;
+      transition: all 0.3s ease;
+    }
+    
+    .history-item:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateX(5px);
+    }
+    
+    .history-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .history-material {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffd93d;
+      flex-grow: 1;
+    }
+    
+    .history-points {
+      background: var(--accent2);
+      color: #04121a;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .history-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    
+    .history-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .detail-icon {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    /* ESTILOS PARA INFORMACIÓN GENERAL */
+    .info-modal-content {
+      max-width: 900px;
+      text-align: center;
+    }
+    
+    .info-link {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: #04121a;
+      padding: 15px 30px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .info-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard {
+        padding: 20px 15px;
+      }
+      
+      .user-data-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-bar {
+        width: 25px;
+      }
+      
+      .history-details {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-controls, .history-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .stage {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width:480px){
+      .panel{
+        padding:20px 15px;
+        min-height:540px;
+      }
+      .btn-container{
+        width:90%;
+      }
+      .logo-circle{
+        width:100px;
+        height:100px;
+        font-size:40px;
+      }
+      .dashboard {
+        padding: 20px 15px;
+      }
+      .modules-grid {
+        gap: 15px;
+      }
+      .module-card {
+        padding: 15px;
+        min-height: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <!-- PANEL 1: Splash / Inicio -->
+    <div class="panel" id="p1">
+      <div class="logo-circle">🌍</div>
+      
+      <div class="btn-container">
+        <button class="btn" onclick="showPanel('registro')">Registrarse</button>
+      </div>
+      <div class="btn-container">
+        <button class="btn btn-secondary" onclick="showPanel('login')">Iniciar sesión</button>
+      </div>
+      
+      <div class="brand">
+        <div class="brand-name">CleanWorld</div>
+        <div class="brand-slogan">Hazlo por un mundo mejor</div>
+      </div>
+      
+      <div class="social-icons">
+        <div class="social-circle">f</div>
+        <div class="social-circle">📱</div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: Registro -->
+    <div class="panel" id="registro" style="display:none">
+      <button class="back-btn" onclick="showPanel('p1')">←</button>
+      
+      <div class="title">
+        <h1>Ingresa</h1>
+        <p>Tus Datos</p>
+      </div>
+      
+      <form class="form" onsubmit="event.preventDefault(); registerUser();">
+        <input required placeholder="Nombre completo" id="regNombre" />
+        <input required type="email" placeholder="Correo electrónico" id="regEmail" />
+        <input type="tel" placeholder="Número de celular" id="regTelefono" />
+        <input required placeholder="Usuario" id="regUsuario" />
+        <input required type="password" placeholder="Contraseña" id="regPassword" />
+        <input placeholder="N° Identidad" id="regIdentidad" />
+        <div class="btn-container">
+          <button class="btn" type="submit" style="margin-top:8px">Registrarme</button>
+        </div>
+      </form>
+      
+      <div class="note">
+        No olvides tu Usuario y Contraseña y tu correo para recuperar tu cuenta
+      </div>
+    </div>
+
+    <!-- PANEL 3: Login -->
+    <div class="panel" id="login" style="display:none">
+      <button class="back-btn" onclick="showPanel('p1')">←</button>
+      
+      <div class="login-header">
+        <div class="login-title">Inicia</div>
+        <div class="login-sub">SESION</div>
+      </div>
+      
+      <input class="login-input" placeholder="Usuario o correo" id="loginUser" />
+      <input class="login-input" type="password" placeholder="Contraseña" id="loginPass" />
+      
+      <div class="btn-container">
+        <button class="btn" onclick="loginUser()">Iniciar sesión</button>
+      </div>
+      
+      <a class="link" href="#" onclick="showPanel('recuperar')">
+        ¿Olvidaste tu contraseña? Toca aquí para recibir un código
+      </a>
+      
+      <div class="brand">
+        <div class="brand-name">CleanWorld</div>
+        <div class="brand-slogan">Hazlo por un mundo mejor</div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: Recuperar contraseña -->
+    <div class="panel" id="recuperar" style="display:none">
+      <button class="back-btn" onclick="showPanel('login')">←</button>
+      
+      <div class="title">
+        <h1>Recuperar Contraseña</h1>
+        <p>Ingresa tu correo para enviarte un código</p>
+      </div>
+      
+      <input class="login-input" placeholder="Correo electrónico" id="recCorreo" />
+      
+      <div class="btn-container">
+        <button class="btn" onclick="enviarCodigo()">Enviar código</button>
+      </div>
+      
+      <div class="note">
+        Te enviaremos un código de verificación a tu correo electrónico
+      </div>
+    </div>
+
+    <!-- PANEL 5: Ingresar código -->
+    <div class="panel" id="ingresarCodigo" style="display:none">
+      <button class="back-btn" onclick="showPanel('recuperar')">←</button>
+      
+      <div class="title">
+        <h1>Código de Verificación</h1>
+        <p>Ingresa el código que recibiste</p>
+      </div>
+      
+      <input class="login-input" placeholder="Código de 6 dígitos" id="codigoInput" maxlength="6" />
+      
+      <div class="btn-container">
+        <button class="btn" onclick="verificarCodigo()">Verificar código</button>
+      </div>
+    </div>
+
+    <!-- PANEL 6: Restablecer cuenta -->
+    <div class="panel" id="restablecer" style="display:none">
+      <button class="back-btn" onclick="showPanel('ingresarCodigo')">←</button>
+      
+      <div class="title">
+        <h1>Nueva Contraseña</h1>
+        <p>Crea tu nueva contraseña</p>
+      </div>
+      
+      <input class="login-input" placeholder="Nueva contraseña" type="password" id="nuevaPass1" />
+      <input class="login-input" placeholder="Confirmar contraseña" type="password" id="nuevaPass2" />
+      
+      <div class="btn-container">
+        <button class="btn" onclick="restablecerCuenta()">Guardar cambios</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL -->
+    <div class="dashboard" id="dashboard" style="display:none">
+      <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+      
+      <div class="dashboard-header">
+        <div class="dashboard-title">¡Bienvenido a CleanWorld!</div>
+        <div class="dashboard-subtitle">Tu plataforma para un mundo más limpio</div>
+      </div>
+      
+      <div class="user-info">
+        <div class="user-name" id="welcomeUser">Usuario</div>
+        <div style="color: #bfe9d3; font-size: 12px;">Hazlo por un mundo mejor</div>
+      </div>
+      
+      <!-- GRID DE MÓDULOS -->
+      <div class="modules-grid">
+        <!-- Módulo 1: Datos de Usuario -->
+        <div class="module-card module-users" onclick="showUserDataModal()">
+          <div class="module-icon">👤</div>
+          <div class="module-title">Mis Datos</div>
+          <div class="module-description">
+            Consulta tu información personal de registro y datos de tu cuenta
+          </div>
+        </div>
+        
+        <!-- Módulo 2: Contenedores -->
+        <div class="module-card module-containers" onclick="showContainersModal()">
+          <div class="module-icon">🗺️</div>
+          <div class="module-title">Contenedores</div>
+          <div class="module-description">
+            Ubicación de contenedores inteligentes y puntos de recolección
+          </div>
+        </div>
+        
+        <!-- Módulo 3: Lugares para Recompensa -->
+        <div class="module-card module-rewards" onclick="showRewardsModal()">
+          <div class="module-icon">🎁</div>
+          <div class="module-title">Lugares para Recompensa</div>
+          <div class="module-description">
+            Canjea tus Kivos por premios y recompensas especiales
+          </div>
+        </div>
+        
+        <!-- Módulo 4: Historial de Registros -->
+        <div class="module-card module-history" onclick="showHistoryModal()">
+          <div class="module-icon">📊</div>
+          <div class="module-title">Historial de Registros</div>
+          <div class="module-description">
+            Tu historial personal de depósitos en contenedores inteligentes
+          </div>
+        </div>
+        
+        <!-- Módulo 5: Ver Puntaje -->
+        <div class="module-card module-points" onclick="showPointsModal()">
+          <div class="module-icon">⭐</div>
+          <div class="module-title">Ver Puntaje</div>
+          <div class="module-description">
+            Consulta tus Kivos acumulados, gráficos por mes/día y tu progreso
+          </div>
+        </div>
+
+        <!-- Módulo 6: Información General -->
+        <div class="module-card module-info" onclick="showInfoModal()">
+          <div class="module-icon">📋</div>
+          <div class="module-title">Información General</div>
+          <div class="module-description">
+            Conoce más sobre nuestro proyecto de reciclaje inclusivo y economía circular
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALES DEL DASHBOARD -->
+  <!-- MODAL DATOS DE USUARIO -->
+  <div class="modal" id="userDataModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">👤 Mis Datos de Usuario</div>
+        <button class="close-modal" onclick="closeModal('userDataModal')">×</button>
+      </div>
+      <div id="userDataContent">
+        <!-- Los datos del usuario se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONTENEDORES -->
+  <div class="modal" id="containersModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🗺️ Contenedores Inteligentes</div>
+        <button class="close-modal" onclick="closeModal('containersModal')">×</button>
+      </div>
+      <div style="padding: 20px;">
+        <h3 style="text-align: center; margin-bottom: 25px; color: #00ff88;">Ubicación de Contenedores</h3>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Contenedor Centro - Plaza Principal</strong><br>
+          <small>Capacidad: 200kg - Tipo: Mixto</small><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Contenedor Norte - Parque Ecológico</strong><br>
+          <small>Capacidad: 150kg - Tipo: Reciclaje</small><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Contenedor Sur - Mercado Municipal</strong><br>
+          <small>Capacidad: 180kg - Tipo: Orgánico</small><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LUGARES PARA RECOMPENSA -->
+  <div class="modal" id="rewardsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🎁 Lugares para Recompensa</div>
+        <button class="close-modal" onclick="closeModal('rewardsModal')">×</button>
+      </div>
+      <div style="padding: 20px;">
+        <h3 style="text-align: center; margin-bottom: 25px; color: #ff6b6b;">Canjea tus Kivos</h3>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Supermercado Central</strong><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Cafetería Ecológica</strong><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+        
+        <div class="reward-item" onclick="openMaps()">
+          <strong>Tienda Sustentable</strong><br>
+          <a class="map-link" href="https://maps.app.goo.gl/2AjzqsYVUMvFQHjx9" target="_blank">
+            📍 Ver en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL HISTORIAL DE REGISTROS -->
+  <div class="modal" id="historyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">📊 Historial de Registros</div>
+        <button class="close-modal" onclick="closeModal('historyModal')">×</button>
+      </div>
+      
+      <div class="history-controls">
+        <select class="year-select" id="yearSelect" onchange="updateHistory()">
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+        </select>
+      </div>
+      
+      <div class="history-list" id="historyList">
+        <!-- El historial se cargará aquí dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER PUNTAJE -->
+  <div class="modal" id="pointsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">⭐ Mis Kivos y Puntaje</div>
+        <button class="close-modal" onclick="closeModal('pointsModal')">×</button>
+      </div>
+      
+      <div class="chart-controls">
+        <select class="year-select" id="pointsYearSelect" onchange="updateChart()">
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+        </select>
+        <select class="month-select" id="monthSelect" onchange="updateChart()">
+          <option value="Todos">Todos (Vista Anual)</option>
+          <option value="Enero">Enero</option>
+          <option value="Febrero">Febrero</option>
+          <option value="Marzo">Marzo</option>
+          <option value="Abril">Abril</option>
+          <option value="Mayo">Mayo</option>
+          <option value="Junio">Junio</option>
+          <option value="Julio">Julio</option>
+          <option value="Agosto">Agosto</option>
+          <option value="Septiembre">Septiembre</option>
+          <option value="Octubre">Octubre</option>
+          <option value="Noviembre">Noviembre</option>
+          <option value="Diciembre">Diciembre</option>
+        </select>
+      </div>
+      
+      <div class="chart-container" id="pointsChart">
+        <!-- El gráfico se generará aquí -->
+      </div>
+      
+      <div class="total-points">
+        <div>Total de Kivos Acumulados</div>
+        <div class="points-number" id="totalPoints">0</div>
+        <div>puntos totales</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL INFORMACIÓN GENERAL -->
+  <div class="modal" id="infoModal">
+    <div class="modal-content info-modal-content">
+      <div class="modal-header">
+        <div class="modal-title">📋 Información General</div>
+        <button class="close-modal" onclick="closeModal('infoModal')">×</button>
+      </div>
+      <div style="padding: 20px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🌍</div>
+        <h3 style="color: var(--accent1); margin-bottom: 15px;">CleanWorld Project</h3>
+        <p style="color: #ccc; margin-bottom: 20px; line-height: 1.6;">
+          Conoce más sobre nuestro proyecto de reciclaje inclusivo y economía circular con innovación tecnológica y social.
+        </p>
+        <a class="info-link" href="https://empresacemvi-productos.my.canva.site/fomentamos-el-reciclaje-inclusivo-y-la-econom-a-circular-con-innovaci-n-tecnol-gica-y-social-conectamos-a-todos-los-actores-de-la-cadena-de-gesti-n-de-residuos-a-trav-s-de-la-aplicaci-n-m-vil-reciapp-fomentamos-el-reciclaje-la-retornabilidad-y" target="_blank">
+          Ver Información Completa
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== SISTEMA DE AUTENTICACIÓN ==========
+    let currentPanel = 'p1';
+    
+    function showPanel(panel){
+      document.querySelectorAll('.panel, .dashboard').forEach(p => p.style.display='none');
+      const el = document.getElementById(panel);
+      if(el) {
+        el.style.display='flex';
+        currentPanel = panel;
+      }
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function registerUser(){
+      const nombre = document.getElementById('regNombre').value;
+      const email = document.getElementById('regEmail').value;
+      const usuario = document.getElementById('regUsuario').value;
+      const password = document.getElementById('regPassword').value;
+      
+      if(nombre && email && usuario && password) {
+        let usuarios = JSON.parse(localStorage.getItem('cleanworld_usuarios')) || [];
+        
+        const usuarioExiste = usuarios.find(u => u.usuario === usuario || u.email === email);
+        
+        if(usuarioExiste) {
+          alert('El usuario o correo electrónico ya está registrado');
+          return;
+        }
+        
+        usuarios.push({
+          nombre: nombre,
+          email: email,
+          usuario: usuario,
+          password: password,
+          telefono: document.getElementById('regTelefono').value,
+          identidad: document.getElementById('regIdentidad').value
+        });
+        
+        localStorage.setItem('cleanworld_usuarios', JSON.stringify(usuarios));
+        
+        alert('¡Usuario registrado exitosamente!');
+        loginDespuesDeRegistro(usuario, password);
+      } else {
+        alert('Por favor completa todos los campos requeridos');
+      }
+    }
+
+    function loginDespuesDeRegistro(usuario, password) {
+      const usuarios = JSON.parse(localStorage.getItem('cleanworld_usuarios')) || [];
+      const usuarioEncontrado = usuarios.find(u => u.usuario === usuario && u.password === password);
+      
+      if(usuarioEncontrado) {
+        localStorage.setItem('usuario_actual', JSON.stringify(usuarioEncontrado));
+        mostrarDashboard(usuarioEncontrado);
+      }
+    }
+
+    function loginUser(){
+      const usuarioInput = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+      
+      if(usuarioInput && password) {
+        const usuarios = JSON.parse(localStorage.getItem('cleanworld_usuarios')) || [];
+        
+        const usuarioEncontrado = usuarios.find(u => 
+          (u.usuario === usuarioInput || u.email === usuarioInput) && u.password === password
+        );
+        
+        if(usuarioEncontrado) {
+          localStorage.setItem('usuario_actual', JSON.stringify(usuarioEncontrado));
+          mostrarDashboard(usuarioEncontrado);
+        } else {
+          alert('Usuario o contraseña incorrectos');
+        }
+      } else {
+        alert('Por favor ingresa usuario y contraseña');
+      }
+    }
+    
+    function mostrarDashboard(usuario) {
+      document.querySelectorAll('.panel, .dashboard').forEach(el => el.style.display = 'none');
+      const dashboard = document.getElementById('dashboard');
+      dashboard.style.display = 'block';
+      document.getElementById('welcomeUser').textContent = `¡Hola, ${usuario.nombre || usuario.usuario}!`;
+    }
+    
+    function logout() {
+      localStorage.removeItem('usuario_actual');
+      showPanel('p1');
+    }
+
+    // FUNCIONES DE RECUPERACIÓN DE CONTRASEÑA
+    function enviarCodigo(){
+      const correo = document.getElementById('recCorreo').value;
+      if(correo && correo.includes('@')) {
+        alert(`Se envió un código de recuperación al correo: ${correo}`);
+        showPanel('ingresarCodigo');
+      } else {
+        alert('Por favor ingresa un correo electrónico válido');
+      }
+    }
+
+    function verificarCodigo(){
+      const cod = document.getElementById('codigoInput').value;
+      if(cod && cod.length === 6) {
+        alert('Código verificado correctamente');
+        showPanel('restablecer');
+      } else {
+        alert('Por favor ingresa un código válido de 6 dígitos');
+      }
+    }
+
+    function restablecerCuenta(){
+      const pass1 = document.getElementById('nuevaPass1').value;
+      const pass2 = document.getElementById('nuevaPass2').value;
+      
+      if(pass1 && pass2) {
+        if(pass1 === pass2) {
+          alert('Contraseña restablecida exitosamente');
+          showPanel('login');
+        } else {
+          alert('Las contraseñas no coinciden');
+        }
+      } else {
+        alert('Por favor completa ambos campos');
+      }
+    }
+
+    // ========== DASHBOARD FUNCTIONS ==========
+    // DATOS DE EJEMPLO MEJORADOS - PUNTOS DE 1 A 5
+    function generateRandomPoints(count) {
+      return Array.from({length: count}, () => Math.floor(Math.random() * 5) + 1);
+    }
+
+    const monthlyPoints = {
+      "2025": {
+        "Todos": generateRandomPoints(12),
+        "Enero": generateRandomPoints(31),
+        "Febrero": generateRandomPoints(28),
+        "Marzo": generateRandomPoints(31),
+        "Abril": generateRandomPoints(30),
+        "Mayo": generateRandomPoints(31),
+        "Junio": generateRandomPoints(30),
+        "Julio": generateRandomPoints(31),
+        "Agosto": generateRandomPoints(31),
+        "Septiembre": generateRandomPoints(30),
+        "Octubre": generateRandomPoints(31),
+        "Noviembre": generateRandomPoints(30),
+        "Diciembre": generateRandomPoints(31)
+      },
+      "2026": {
+        "Todos": generateRandomPoints(12),
+        "Enero": generateRandomPoints(31),
+        "Febrero": generateRandomPoints(29),
+        "Marzo": generateRandomPoints(31),
+        "Abril": generateRandomPoints(30),
+        "Mayo": generateRandomPoints(31),
+        "Junio": generateRandomPoints(30),
+        "Julio": generateRandomPoints(31),
+        "Agosto": generateRandomPoints(31),
+        "Septiembre": generateRandomPoints(30),
+        "Octubre": generateRandomPoints(31),
+        "Noviembre": generateRandomPoints(30),
+        "Diciembre": generateRandomPoints(31)
+      }
+    };
+
+    const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    
+    // HISTORIAL MEJORADO CON FECHAS 2025 EN ADELANTE
+    const sampleHistory = {
+      "2025": [
+        { material: "Plástico PET", descripcion: "Botellas de agua reciclables", id: "CTN-001", fecha: "15/Octubre/2025", puntos: 3 },
+        { material: "Vidrio", descripcion: "Botellas de vidrio transparente", id: "CTN-002", fecha: "18/Octubre/2025", puntos: 4 },
+        { material: "Papel", descripcion: "Periódicos y revistas usadas", id: "CTN-003", fecha: "20/Octubre/2025", puntos: 2 },
+        { material: "Aluminio", descripcion: "Latas de bebidas aluminio", id: "CTN-001", fecha: "22/Octubre/2025", puntos: 5 },
+        { material: "Cartón", descripcion: "Cajas de embalaje limpias", id: "CTN-004", fecha: "25/Octubre/2025", puntos: 3 }
+      ],
+      "2026": [
+        { material: "Plástico PET", descripcion: "Envases de productos", id: "CTN-001", fecha: "10/Enero/2026", puntos: 4 },
+        { material: "Vidrio", descripcion: "Frascos de conservas", id: "CTN-002", fecha: "15/Enero/2026", puntos: 3 }
+      ]
+    };
+
+    // FUNCIONES DE MODALES DASHBOARD
+    function showUserDataModal() {
+      const modal = document.getElementById('userDataModal');
+      const userDataContent = document.getElementById('userDataContent');
+      const usuarioActual = JSON.parse(localStorage.getItem('usuario_actual'));
+      
+      if (usuarioActual) {
+        userDataContent.innerHTML = `
+          <div class="user-data-grid">
+            <div class="data-item">
+              <div class="data-label">Nombre Completo</div>
+              <div class="data-value">${usuarioActual.nombre || 'No especificado'}</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Usuario</div>
+              <div class="data-value">${usuarioActual.usuario}</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Correo Electrónico</div>
+              <div class="data-value">${usuarioActual.email}</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Teléfono</div>
+              <div class="data-value">${usuarioActual.telefono || 'No especificado'}</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">N° Identidad</div>
+              <div class="data-value">${usuarioActual.identidad || 'No especificado'}</div>
+            </div>
+            <div class="data-item">
+              <div class="data-label">Fecha de Registro</div>
+              <div class="data-value">${new Date().toLocaleDateString()}</div>
+            </div>
+          </div>
+        `;
+      } else {
+        userDataContent.innerHTML = '<p>No se encontraron datos del usuario.</p>';
+      }
+      
+      modal.style.display = 'flex';
+    }
+
+    function showContainersModal() {
+      document.getElementById('containersModal').style.display = 'flex';
+    }
+
+    function showRewardsModal() {
+      document.getElementById('rewardsModal').style.display = 'flex';
+    }
+
+    function showInfoModal() {
+      document.getElementById('infoModal').style.display = 'flex';
+    }
+
+    function openMaps() {
+      // Función para abrir maps (ya está en los enlaces)
+    }
+
+    function showHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      modal.style.display = 'flex';
+      updateHistory();
+    }
+
+    function updateHistory() {
+      const selectedYear = document.getElementById('yearSelect').value;
+      const historyList = document.getElementById('historyList');
+      const historyData = sampleHistory[selectedYear] || [];
+      
+      historyList.innerHTML = '';
+      
+      if (historyData.length === 0) {
+        historyList.innerHTML = '<p style="text-align: center; color: #888; padding: 40px;">No hay registros para este año</p>';
+        return;
+      }
+      
+      historyData.forEach(record => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+          <div class="history-header">
+            <div class="history-material">${record.material}</div>
+            <div class="history-points">${record.puntos} Kivos</div>
+          </div>
+          <div style="color: #ccc; font-size: 13px; margin-bottom: 8px;">${record.descripcion}</div>
+          <div class="history-details">
+            <div class="history-detail-item">
+              <span class="detail-icon">🆔</span>
+              <span>ID: ${record.id}</span>
+            </div>
+            <div class="history-detail-item">
+              <span class="detail-icon">📅</span>
+              <span>Fecha: ${record.fecha}</span>
+            </div>
+          </div>
+        `;
+        historyList.appendChild(historyItem);
+      });
+    }
+
+    function showPointsModal() {
+      const modal = document.getElementById('pointsModal');
+      modal.style.display = 'flex';
+      updateChart();
+    }
+
+    function updateChart() {
+      const selectedYear = document.getElementById('pointsYearSelect').value;
+      const selectedMonth = document.getElementById('monthSelect').value;
+      const chart = document.getElementById('pointsChart');
+      const totalPointsEl = document.getElementById('totalPoints');
+      
+      const yearData = monthlyPoints[selectedYear] || monthlyPoints["2025"];
+      const points = yearData[selectedMonth] || [];
+      
+      const total = points.reduce((sum, point) => sum + point, 0);
+      totalPointsEl.textContent = total;
+      
+      chart.innerHTML = '';
+      if (points.length === 0) {
+        chart.innerHTML = '<p style="text-align: center; color: #888;">No hay datos para esta selección</p>';
+        return;
+      }
+      
+      const maxPoint = Math.max(...points);
+      
+      points.forEach((point, index) => {
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        const height = maxPoint > 0 ? (point / maxPoint) * 180 : 0;
+        bar.style.height = height + 'px';
+        
+        let label = '';
+        if (selectedMonth === 'Todos') {
+          label = months[index];
+        } else {
+          label = (index + 1).toString();
+        }
+        
+        bar.innerHTML = `
+          <div class="bar-value">${point}</div>
+          <div class="bar-label">${label}</div>
+        `;
+        chart.appendChild(bar);
+      });
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Cerrar modal al hacer click fuera
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    // INICIALIZACIÓN
+    window.addEventListener('DOMContentLoaded', function() {
+      const usuarioActual = localStorage.getItem('usuario_actual');
+      if(usuarioActual) {
+        mostrarDashboard(JSON.parse(usuarioActual));
+      } else {
+        showPanel('p1');
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
